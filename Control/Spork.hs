@@ -19,8 +19,8 @@
 
 module Control.Spork
     ( Handles
-    , defaultHandles
     , spork
+    , sporkDefaultHandles
     , sporkWithHandles
     , teaspork
     , teasporkWithHandles
@@ -32,9 +32,9 @@ import System.IO.Unsafe
 
 type Handles a = [Handler (Either String a)]
 
-{-# INLINEABLE defaultHandles #-}
-defaultHandles :: Handles a
-defaultHandles =
+{-# INLINEABLE sporkDefaultHandles #-}
+sporkDefaultHandles :: Handles a
+sporkDefaultHandles =
     [ Handler $ \(x :: ArithException)   -> return (Left $ show x)
     , Handler $ \(x :: ArrayException)   -> return (Left $ show x)
     , Handler $ \(x :: ErrorCall)        -> return (Left $ show x)
@@ -50,7 +50,7 @@ sporkWithHandles handles a = unsafePerformIO $
 -- | Evaluate a value to normal form and return Left if any exceptions are thrown during evaluation. For any error-free value, @spork = Right@.
 {-# INLINE spork #-}
 spork :: NFData a => a -> Either String a
-spork = sporkWithHandles defaultHandles
+spork = sporkWithHandles sporkDefaultHandles
 
 {-# INLINEABLE teasporkWithHandles #-}
 teasporkWithHandles :: Handles a -> a -> Either String a
@@ -60,5 +60,5 @@ teasporkWithHandles handles a = unsafePerformIO $
 -- | Like 'spork', but only evaluates to WHNF.
 {-# INLINE teaspork #-}
 teaspork :: a -> Either String a
-teaspork = teasporkWithHandles defaultHandles
+teaspork = teasporkWithHandles sporkDefaultHandles
 

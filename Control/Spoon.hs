@@ -19,8 +19,8 @@
 
 module Control.Spoon
     ( Handles
-    , defaultHandles
     , spoon
+    , spoonDefaultHandles
     , spoonWithHandles
     , teaspoon
     , teaspoonWithHandles
@@ -32,9 +32,9 @@ import System.IO.Unsafe
 
 type Handles a = [Handler (Maybe a)]
 
-{-# INLINEABLE defaultHandles #-}
-defaultHandles :: Handles a
-defaultHandles =
+{-# INLINEABLE spoonDefaultHandles #-}
+spoonDefaultHandles :: Handles a
+spoonDefaultHandles =
     [ Handler $ \(_ :: ArithException)   -> return Nothing
     , Handler $ \(_ :: ArrayException)   -> return Nothing
     , Handler $ \(_ :: ErrorCall)        -> return Nothing
@@ -50,7 +50,7 @@ spoonWithHandles handles a = unsafePerformIO $
 -- | Evaluate a value to normal form and return Nothing if any exceptions are thrown during evaluation. For any error-free value, @spoon = Just@.
 {-# INLINE spoon #-}
 spoon :: NFData a => a -> Maybe a
-spoon = spoonWithHandles defaultHandles
+spoon = spoonWithHandles spoonDefaultHandles
 
 {-# INLINEABLE teaspoonWithHandles #-}
 teaspoonWithHandles :: Handles a -> a -> Maybe a
@@ -60,5 +60,5 @@ teaspoonWithHandles handles a = unsafePerformIO $
 -- | Like 'spoon', but only evaluates to WHNF.
 {-# INLINE teaspoon #-}
 teaspoon :: a -> Maybe a
-teaspoon = teaspoonWithHandles defaultHandles
+teaspoon = teaspoonWithHandles spoonDefaultHandles
 
