@@ -1,4 +1,4 @@
-cabal-version:  >= 1.2
+cabal-version:  >= 1.10
 name:           spork
 version:        0.4.0
 license:        BSD3
